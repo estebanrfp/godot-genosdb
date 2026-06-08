@@ -1,8 +1,24 @@
 # Credits
 
-The code is MIT (see `LICENSE`). The demo art below is **CC0 (public domain)** —
-free to use and redistribute, no attribution required. Credited here anyway, with
-thanks to the artists.
+The code is MIT (see `LICENSE`). The art is a mix of **CC0** (no attribution
+required) and the **LPC character** (CC-BY-SA, attribution required — below).
+
+## Player character (LPC — CC-BY-SA 3.0)
+
+The animated farmer (4-directional walk + axe chop) was assembled from the
+**Universal LPC Spritesheet** layers (body, pants, longsleeve shirt, war axe) via
+the [LPC generator](https://github.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator).
+Licensed **CC-BY-SA 3.0 / GPL 3.0 / OGA-BY 3.0**; the composed spritesheets
+(`assets/farm/farmer_walk.png`, `farmer_chop.png`) are redistributed under
+**CC-BY-SA 3.0**. Authors:
+
+> bluecarrot16, JaidynReiman, Benjamin K. Smith (BenCreating), Evert,
+> Eliza Wyatt (ElizaWy), TheraHedwig, MuffinElZangano, Durrani,
+> Johannes Sjölund (wulax), Stephen Challener (Redshrike),
+> Sander Frenken (castelonia), Matthew Krohn (makrohn).
+
+Sources: https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles ·
+https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
 
 ## Art assets (CC0)
 

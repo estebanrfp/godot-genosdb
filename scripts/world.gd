@@ -67,9 +67,7 @@ func _process(delta: float) -> void:
 		Net.send({
 			"x": player.global_position.x,
 			"y": player.global_position.y,
-			"f": player.flip,
-			"ch": player.char_index,
-			"mv": player.is_moving,
+			"a": player.anim.animation,
 		})
 	_cull_stale()
 

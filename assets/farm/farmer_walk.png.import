@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cjmlqnmfow2ra"
-path="res://.godot/imported/farmer_blonde.png-26f2c420faa8ee08269a912f1b1cfa4a.ctex"
+uid="uid://d0kplgw6pcg2f"
+path="res://.godot/imported/farmer_walk.png-b62e34ecfc4ef46eb3070978a51c8d5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/farm/farmer_blonde.png"
-dest_files=["res://.godot/imported/farmer_blonde.png-26f2c420faa8ee08269a912f1b1cfa4a.ctex"]
+source_file="res://assets/farm/farmer_walk.png"
+dest_files=["res://.godot/imported/farmer_walk.png-b62e34ecfc4ef46eb3070978a51c8d5e.ctex"]
 
 [params]
 
