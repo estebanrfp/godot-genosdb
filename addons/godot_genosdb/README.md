@@ -1,7 +1,7 @@
 # GenosDB for Godot
 
 Serverless **P2P multiplayer** for Godot **Web** exports, powered by
-[GenosDB](https://github.com/estebanrfp/GenosDB) (GenosRTC data channels + a
+[GenosDB](https://github.com/estebanrfp/gdb) (GenosRTC data channels + a
 reactive, persistent graph). No backend, no signaling server to run.
 
 The API **mirrors GenosDB on purpose** — using this plugin teaches you the real

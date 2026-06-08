@@ -3,22 +3,29 @@
 ![GenosDB for Godot — serverless P2P multiplayer powered by GenosDB](media/cover.jpg)
 
 Add **real-time, peer-to-peer multiplayer** to a Godot game exported to the Web
-with **zero servers**, using [GenosDB](https://github.com/estebanrfp/GenosDB)
+with **zero servers**, using [GenosDB](https://github.com/estebanrfp/gdb)
 (WebRTC data channels + a reactive, persistent graph database that runs entirely
 in the browser). The plugin's API **mirrors GenosDB**, so using it teaches you
 the real GenosDB API.
 
 **▶ Live demo:** https://estebanrfp.github.io/godot-genosdb/ — open it in **two
-tabs**: each shows the other farmer moving, and **a tree you chop falls in every
-window** (and stays fallen, even for someone who joins later).
+tabs**: each shows the other farmer moving, **a tree you chop falls in every
+window** (and stays fallen, even for someone who joins later), and you can **chat**
+— messages pop as speech bubbles over every player.
+
+A cozy co-op farm: walk a 4-directional farmer, chop trees with an axe (the shared
+wood total counts felled trees for everyone), **chat** with peers, and **Reset** the
+world for all — plus sound effects and ambient music. Everything is **serverless
+P2P**, and each mechanic maps to a real GenosDB call (`send` / `map` / `put` /
+`remove`). All art & audio are **CC0** (see [CREDITS.md](CREDITS.md)).
 
 <!-- ![demo](docs-media/demo.gif) -->
 
-> 🧠 **Powered by [GenosDB](https://github.com/estebanrfp/GenosDB)** — a decentralized graph
+> 🧠 **Powered by [GenosDB](https://github.com/estebanrfp/gdb)** — a decentralized graph
 > database that runs entirely in your browser (P2P sync + persistence, **no server**). It's
-> what makes all of this possible. If this project helps you, please **⭐ [star GenosDB](https://github.com/estebanrfp/GenosDB)** to help it grow.
+> what makes all of this possible. If this project helps you, please **⭐ [star GenosDB](https://github.com/estebanrfp/gdb)** to help it grow.
 >
-> [![Star GenosDB on GitHub](https://img.shields.io/github/stars/estebanrfp/GenosDB?style=social)](https://github.com/estebanrfp/GenosDB)
+> [![Star GenosDB on GitHub](https://img.shields.io/github/stars/estebanrfp/gdb?style=social)](https://github.com/estebanrfp/gdb)
 
 ## 📦 What's in this repo
 
@@ -28,6 +35,7 @@ window** (and stays fallen, even for someone who joins later).
 | `scenes/`, `scripts/`, `assets/`, `project.godot` | **The demo's full source** (the co-op farm) |
 | **`docs/`** | The **exported Web build** (this is what GitHub Pages serves) |
 | `web/build.sh`, `web/serve.py` | Build & local-serve helpers |
+| **`CREDITS.md`** | Art & audio credits (all **CC0**) + GenosDB |
 
 ---
 
@@ -85,8 +93,10 @@ Full API: **[addons/godot_genosdb/README.md](addons/godot_genosdb/README.md)**.
 ## ▶ Run the demo
 
 **Editor (single-player):** open the project in **Godot 4.6+** and press ▶.
-Move with **WASD/arrows**, chop trees with **E / Space**. (P2P is Web-only, so in
-the editor it runs as a normal single-player game.)
+**Controls:** move with **WASD/arrows**, chop trees with **E / Space**, **chat**
+with the box at the bottom-right (type + **Enter**), and **Reset** the shared world
+with the top-right button. (P2P is Web-only, so in the editor it runs as a normal
+single-player game.)
 
 **Web (multiplayer), locally:**
 ```bash
@@ -100,10 +110,12 @@ Or just open the **live demo** above.
 GenosDB isn't only WebRTC — it's a **reactive graph database** that syncs P2P
 **and persists**. So the demo uses both layers, the recommended GenosDB pattern:
 
-- **Ephemeral** — player positions over a GenosRTC **data channel** (`Net.send`).
-- **Persistent** — tree state in the GenosDB **graph** (`Net.put` / `Net.map`); a
-  **late-joiner gets the current world automatically** (via the `initial` action)
-  and chops survive reloads.
+- **Ephemeral** — player positions **and chat messages** over a GenosRTC **data
+  channel** (`Net.send`): fast, fire-and-forget, no persistence.
+- **Persistent** — tree state + the shared wood total in the GenosDB **graph**
+  (`Net.put` / `Net.map`, and `Net.remove` for the Reset button); a **late-joiner
+  gets the current world automatically** (via the `initial` action) and chops
+  survive reloads.
 
 ## 🛠 Tech
 
@@ -112,7 +124,7 @@ GenosDB isn't only WebRTC — it's a **reactive graph database** that syncs P2P
 
 ---
 
-⭐ **Star [GenosDB](https://github.com/estebanrfp/GenosDB)** (and this plugin) if they help you — it's the best, free way to support the project and help it grow.
+⭐ **Star [GenosDB](https://github.com/estebanrfp/gdb)** (and this plugin) if they help you — it's the best, free way to support the project and help it grow.
 
 ## Author
 
