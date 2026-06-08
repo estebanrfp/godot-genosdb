@@ -12,6 +12,12 @@ window** (and stays fallen, even for someone who joins later).
 
 <!-- ![demo](docs-media/demo.gif) -->
 
+> 🧠 **Powered by [GenosDB](https://github.com/estebanrfp/GenosDB)** — a decentralized graph
+> database that runs entirely in your browser (P2P sync + persistence, **no server**). It's
+> what makes all of this possible. If this project helps you, please **⭐ [star GenosDB](https://github.com/estebanrfp/GenosDB)** to help it grow.
+>
+> [![Star GenosDB on GitHub](https://img.shields.io/github/stars/estebanrfp/GenosDB?style=social)](https://github.com/estebanrfp/GenosDB)
+
 ## 📦 What's in this repo
 
 | Path | What |
@@ -95,6 +101,10 @@ GenosDB isn't only WebRTC — it's a **reactive graph database** that syncs P2P
 
 - **Godot 4.6** — GL Compatibility, Web export, no threads → any static host.
 - **GenosDB / GenosRTC** — loaded from CDN; auto-injected on export.
+
+---
+
+⭐ **Star [GenosDB](https://github.com/estebanrfp/GenosDB)** (and this plugin) if they help you — it's the best, free way to support the project and help it grow.
 
 ## Author
 
