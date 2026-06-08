@@ -25,21 +25,22 @@ func _ready() -> void:
 	if tree_id == "":
 		tree_id = name
 
-## Local chop: lower hp, share the tree state, and record a unique chop event so
-## the shared wood total counts EVERY chop (a race-free grow-only counter).
+## Local chop: lower hp and share the tree state. Only when the tree actually
+## FALLS (hp <= 0) do we record a unique fell event, so the shared wood total
+## counts real felled trees — not every hit (a race-free grow-only counter).
 func chop(dmg: int = 1) -> void:
 	if _fallen:
 		return
 	hp -= dmg
 	_shake()
 	Net.put({"type": "tree", "hp": hp}, tree_id)
-	Net.put({"type": "chop", "tree": tree_id}, _chop_event_id())
 	if hp <= 0:
+		Net.put({"type": "fell", "tree": tree_id}, _fell_event_id())
 		_topple()
 
-## Unique id per chop. Only the chopping peer generates it, so it never collides.
-func _chop_event_id() -> String:
-	return "chop_%s_%d_%d" % [tree_id, Time.get_ticks_usec(), randi()]
+## Unique id per felled tree. Only the felling peer generates it, so it never collides.
+func _fell_event_id() -> String:
+	return "fell_%s_%d_%d" % [tree_id, Time.get_ticks_usec(), randi()]
 
 ## Apply a tree state received from a peer (or our own echo).
 func apply_remote(data: Dictionary) -> void:

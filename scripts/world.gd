@@ -4,10 +4,10 @@ extends Node2D
 ##   positions -> Net.send (ephemeral channel)   trees -> Net.put / Net.map (graph)
 ##
 ## SHARED WOOD: the wood total is a co-op team value derived from the graph by
-## counting unique "chop" event nodes (a race-free grow-only counter). Every chop
-## writes its own node, so concurrent chops never clobber each other, and trees can
-## regrow and be chopped again while the total keeps climbing. Late-joiners get the
-## full history via 'initial', so everyone sees the same total.
+## counting unique "fell" event nodes — one per tree actually felled (not per hit),
+## a race-free grow-only counter. Concurrent fells never clobber each other, and a
+## regrown tree felled again adds another node. Late-joiners get the full history
+## via 'initial', so everyone sees the same total.
 
 signal wood_changed(total: int)
 
@@ -37,14 +37,14 @@ const RELAYS := [
 
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
-const WOOD_PER_CHOP := 2      ## wood gained per chop, multiplied into the shared total
+const WOOD_PER_TREE := 2      ## wood gained per felled tree, multiplied into the shared total
 
 @onready var player: CharacterBody2D = $Player
 
 var _remotes: Dictionary = {}     ## peerId -> remote farmer node
 var _last_seen: Dictionary = {}   ## peerId -> last update time (ms)
 var _trees: Dictionary = {}       ## tree_id -> tree node
-var _chops: Dictionary = {}       ## chop event id -> true (for the shared wood total)
+var _fells: Dictionary = {}       ## fell event id -> true (for the shared wood total)
 var _send_accum := 0.0
 
 func _ready() -> void:
@@ -116,8 +116,8 @@ func _on_graph(id: String, action: String, data: Dictionary) -> void:
 			var t: Node = _trees.get(id)
 			if t and is_instance_valid(t):
 				t.apply_remote(data)
-		"chop":
-			# Shared, race-free wood total: count unique chop events from the graph.
-			if action != "removed" and not _chops.has(id):
-				_chops[id] = true
-				wood_changed.emit(_chops.size() * WOOD_PER_CHOP)
+		"fell":
+			# Shared, race-free wood total: count unique felled-tree events.
+			if action != "removed" and not _fells.has(id):
+				_fells[id] = true
+				wood_changed.emit(_fells.size() * WOOD_PER_TREE)
