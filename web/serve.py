@@ -1,9 +1,11 @@
 #!/usr/bin/env python3
-"""Tiny static server for the Godot Web export (correct .wasm MIME, no cache).
-Usage: python3 serve.py [port]   (default 8088)  ->  http://127.0.0.1:<port>
-GL Compatibility + no-threads export needs no special COOP/COEP headers."""
-import http.server, socketserver, sys
+"""Tiny static server for the Godot Web export. Always serves the folder this
+script lives in (so `python3 docs/serve.py 8088` serves docs/ from anywhere).
+Correct .wasm MIME, no cache. GL Compatibility + no-threads needs no COOP/COEP.
+Usage: python3 serve.py [port]   (default 8088)  ->  http://127.0.0.1:<port>"""
+import http.server, socketserver, sys, os
 
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 PORT = int(sys.argv[1]) if len(sys.argv) > 1 else 8088
 
 class Handler(http.server.SimpleHTTPRequestHandler):
