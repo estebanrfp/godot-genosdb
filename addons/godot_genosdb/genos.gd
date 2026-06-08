@@ -3,18 +3,23 @@ extends Node
 ## GenosDB <-> Godot bridge (autoload "Net"). Web-only; every method is a safe
 ## no-op on desktop, so the same code runs everywhere.
 ##
-## Hybrid sync (GenosDB's recommended model):
-##   - EPHEMERAL  : broadcast()  -> message_received   (GenosRTC data channel)
-##   - PERSISTENT : db_put()/db_remove() -> graph_changed (reactive graph; late
-##                  joiners get current state via the 'initial' action)
+## The API mirrors GenosDB on purpose, so using this plugin teaches the real
+## GenosDB API:
+##   GenosDB (JS)                    ->  Godot (Net)
+##   await gdb(name, {rtc:true})     ->  Net.join(name)
+##   room.on('peer:join'/'leave')    ->  signals peer_join / peer_leave
+##   channel.send(data)              ->  Net.send(data)            (ephemeral)
+##   channel.on('message', cb)       ->  signal message(id, data)  (ephemeral)
+##   db.put(node, id)                ->  Net.put(data, id)          (graph)
+##   db.remove(id)                   ->  Net.remove(id)             (graph)
+##   db.map(query, cb)               ->  Net.map(query) + signal graph_changed
 ##
-## The JS half (genos_bridge.js) is auto-injected into the Web export by the
-## editor export plugin and loads GenosDB from a CDN.
+## (db.get() isn't exposed because Godot's Object.get() collides; use map().)
 
-signal peer_joined(id: String)
-signal peer_left(id: String)
-signal message_received(id: String, data: Dictionary)
-signal graph_changed(id: String, action: String, data: Dictionary)
+signal peer_join(id: String)
+signal peer_leave(id: String)
+signal message(id: String, data: Dictionary)                       # ephemeral channel
+signal graph_changed(id: String, action: String, data: Dictionary) # graph (db.map)
 
 var enabled := false
 var ready_bridge := false
@@ -38,8 +43,8 @@ func _make(c: Callable) -> JavaScriptObject:
 	_callbacks.append(cb)
 	return cb
 
-## Join (or create) a GenosDB room. All peers using the same id share the world.
-## Retries until the injected bridge module has finished loading.
+## Open a room (= a GenosDB instance named `room_id`). All peers using the same
+## id share the world. Retries until the injected bridge module has loaded.
 func join(room_id: String) -> void:
 	if not enabled:
 		return
@@ -53,31 +58,38 @@ func _try_join() -> void:
 	else:
 		get_tree().create_timer(0.2).timeout.connect(_try_join, CONNECT_ONE_SHOT)
 
-## Ephemeral broadcast to all peers (fast, not stored). E.g. player positions.
-func broadcast(data: Dictionary) -> void:
+## EPHEMERAL — broadcast to every peer (GenosRTC data channel). Not stored.
+func send(data: Dictionary) -> void:
 	if enabled and ready_bridge:
 		_w.NetSend(JSON.stringify(data))
 
-## Write/update a node in the shared persistent graph (syncs P2P + persists).
-func db_put(id: String, data: Dictionary) -> void:
+## GRAPH — insert/update a node (GenosDB db.put). Synced P2P and persisted.
+## Pass an explicit id, or leave it empty to let GenosDB generate one.
+func put(data: Dictionary, id: String = "") -> void:
 	if enabled and ready_bridge:
-		_w.NetPut(id, JSON.stringify(data))
+		_w.NetPut(JSON.stringify(data), id)
 
-## Remove a node from the shared graph.
-func db_remove(id: String) -> void:
+## GRAPH — delete a node (GenosDB db.remove).
+func remove(id: String) -> void:
 	if enabled and ready_bridge:
 		_w.NetRemove(id)
 
+## GRAPH — subscribe to a query (GenosDB db.map). Updates arrive on graph_changed.
+## Empty query = all nodes. Late-joiners receive current state via action "initial".
+func map(query: Dictionary = {}) -> void:
+	if enabled and ready_bridge:
+		_w.NetMap(JSON.stringify(query))
+
 func _on_join(a: Array) -> void:
-	peer_joined.emit(str(a[0]))
+	peer_join.emit(str(a[0]))
 
 func _on_leave(a: Array) -> void:
-	peer_left.emit(str(a[0]))
+	peer_leave.emit(str(a[0]))
 
 func _on_msg(a: Array) -> void:
 	var p: Variant = JSON.parse_string(str(a[1]))
 	if typeof(p) == TYPE_DICTIONARY:
-		message_received.emit(str(a[0]), p)
+		message.emit(str(a[0]), p)
 
 func _on_graph(a: Array) -> void:
 	var p: Variant = JSON.parse_string(str(a[2]))

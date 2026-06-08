@@ -1,8 +1,7 @@
 extends Node2D
 
-## Demo orchestrator using the godot_genosdb addon's generic API.
-## Positions: Net.broadcast (ephemeral). Trees: Net.db_put / graph_changed
-## (persistent graph — late-joiners get the chopped state automatically).
+## Demo orchestrator. Uses the godot_genosdb API, which mirrors GenosDB:
+##   positions -> Net.send (ephemeral channel)   trees -> Net.put / Net.map (graph)
 
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
 const ROOM_ID := "granja-genosdb-demo"
@@ -19,26 +18,27 @@ func _ready() -> void:
 		var tid: Variant = t.get("tree_id")
 		if tid != null and tid != "":
 			_trees[tid] = t
-	Net.peer_joined.connect(_on_peer_joined)
-	Net.peer_left.connect(_on_peer_left)
-	Net.message_received.connect(_on_message)
+	Net.peer_join.connect(_on_peer_join)
+	Net.peer_leave.connect(_on_peer_leave)
+	Net.message.connect(_on_message)
 	Net.graph_changed.connect(_on_graph)
 	Net.join(ROOM_ID)
+	Net.map({})   # subscribe to the shared world graph (all nodes)
 
 func _process(delta: float) -> void:
 	_send_accum += delta
 	if _send_accum >= SEND_INTERVAL:
 		_send_accum = 0.0
-		Net.broadcast({
+		Net.send({
 			"x": player.global_position.x,
 			"y": player.global_position.y,
 			"a": player.anim.animation,
 			"f": player.anim.flip_h,
 		})
 
-# --- Players (ephemeral data channel) ---
+# --- Players (ephemeral channel) ---
 
-func _on_peer_joined(id: String) -> void:
+func _on_peer_join(id: String) -> void:
 	if _remotes.has(id):
 		return
 	var r := REMOTE_PLAYER.instantiate()
@@ -47,14 +47,14 @@ func _on_peer_joined(id: String) -> void:
 	r.set_label(id.substr(0, 4))
 	_remotes[id] = r
 
-func _on_peer_left(id: String) -> void:
+func _on_peer_leave(id: String) -> void:
 	if _remotes.has(id):
 		_remotes[id].queue_free()
 		_remotes.erase(id)
 
 func _on_message(id: String, data: Dictionary) -> void:
 	if not _remotes.has(id):
-		_on_peer_joined(id)
+		_on_peer_join(id)
 	var r: Node = _remotes.get(id)
 	if r:
 		r.receive_state(data)

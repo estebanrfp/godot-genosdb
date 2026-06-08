@@ -1,6 +1,6 @@
 extends Area2D
 
-## Choppable tree whose state is shared through the GenosDB graph (Net.db_put).
+## Choppable tree whose state is shared through the GenosDB graph (Net.put).
 ## A LOCAL chop writes the new hp to the graph; peers (and late-joiners, via the
 ## 'initial' action) receive it through Net.graph_changed -> apply_remote().
 ## The tree's id is its node name (Tree1..Tree7) — identical on every peer.
@@ -25,7 +25,7 @@ func chop(dmg: int = 1) -> void:
 		return
 	hp -= dmg
 	_shake()
-	Net.db_put(tree_id, {"type": "tree", "hp": hp})
+	Net.put({"type": "tree", "hp": hp}, tree_id)   # GenosDB db.put(node, id)
 	if hp <= 0:
 		_reward_local()
 		_topple()
