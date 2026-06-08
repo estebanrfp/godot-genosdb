@@ -37,7 +37,7 @@ const RELAYS := [
 
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
-const WOOD_PER_TREE := 2      ## wood gained per felled tree, multiplied into the shared total
+const WOOD_PER_TREE := 1      ## one felled tree = +1 (the shared total = trees felled)
 
 @onready var player: CharacterBody2D = $Player
 
