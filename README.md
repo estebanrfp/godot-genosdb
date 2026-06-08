@@ -1,5 +1,7 @@
 # 🌾 godot-genosdb — Serverless P2P multiplayer for Godot (Web)
 
+![GenosDB for Godot — serverless P2P multiplayer powered by GenosDB](media/cover.jpg)
+
 Add **real-time, peer-to-peer multiplayer** to a Godot game exported to the Web
 with **zero servers**, using [GenosDB](https://github.com/estebanrfp/GenosDB)
 (WebRTC data channels + a reactive, persistent graph database that runs entirely
