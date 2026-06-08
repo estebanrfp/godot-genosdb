@@ -44,8 +44,10 @@ func chop(dmg: int = 1) -> void:
 		return
 	hp -= dmg
 	_shake()
+	Sfx.play("chop", -3.0, randf_range(0.92, 1.1))
 	Net.put({"type": "tree", "hp": hp}, tree_id)
 	if hp <= 0:
+		Sfx.play("wood", -8.0)        # reward chime for felling it
 		Net.put({"type": "fell", "tree": tree_id}, _fell_event_id())
 		_topple()
 
@@ -76,6 +78,7 @@ func _topple() -> void:
 		return
 	_fallen = true
 	monitoring = false                  # stop being choppable while down
+	Sfx.play("fall", -2.0)              # crash — plays for local and remote fells
 	_trunk.set_deferred("disabled", true)   # let players walk over the fallen spot
 	var t := create_tween()
 	t.set_parallel(true)

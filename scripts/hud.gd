@@ -11,7 +11,10 @@ func _ready() -> void:
 	# The HUD is a child of the World node, which owns the shared world state.
 	var world := get_parent()
 	world.wood_changed.connect(_on_wood_changed)
-	reset_button.pressed.connect(world.reset_world)
+	reset_button.pressed.connect(func() -> void:
+		Sfx.play("reset")
+		world.reset_world()
+	)
 
 func _on_wood_changed(total: int) -> void:
 	label.text = "Wood: %d" % total
