@@ -80,3 +80,13 @@ offset_right = 31.0
 offset_bottom = 31.0
 theme_override_font_sizes/font_size = 16
 text = "Wood: 0"
+
+[node name="Reset" type="Button" parent="HUD" unique_id=771155003]
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -92.0
+offset_top = 8.0
+offset_right = -8.0
+offset_bottom = 36.0
+grow_horizontal = 0
+text = "Reset"

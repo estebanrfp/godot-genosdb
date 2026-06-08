@@ -111,6 +111,11 @@ func _drop(id: String) -> void:
 # --- Trees + shared wood (persistent graph) ---
 
 func _on_graph(id: String, action: String, data: Dictionary) -> void:
+	# A removed node carries no value, so key off the id we already track.
+	if action == "removed":
+		if _fells.erase(id):
+			wood_changed.emit(_fells.size() * WOOD_PER_TREE)
+		return
 	match data.get("type", ""):
 		"tree":
 			var t: Node = _trees.get(id)
@@ -118,6 +123,17 @@ func _on_graph(id: String, action: String, data: Dictionary) -> void:
 				t.apply_remote(data)
 		"fell":
 			# Shared, race-free wood total: count unique felled-tree events.
-			if action != "removed" and not _fells.has(id):
+			if not _fells.has(id):
 				_fells[id] = true
 				wood_changed.emit(_fells.size() * WOOD_PER_TREE)
+
+## Reset the SHARED world for everyone: remove every fell event (wood -> 0) and
+## regrow all trees. This is the GenosDB remove() side of the API — chopping uses
+## put(), resetting uses remove(), and the change propagates to every peer.
+func reset_world() -> void:
+	for fell_id in _fells.keys():
+		Net.remove(fell_id)                                  # GenosDB db.remove(id)
+	for tree_id in _trees.keys():
+		var t: Node = _trees[tree_id]
+		if is_instance_valid(t):
+			Net.put({"type": "tree", "hp": t.max_hp}, tree_id)
