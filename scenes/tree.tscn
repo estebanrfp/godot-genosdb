@@ -1,0 +1,27 @@
+[gd_scene format=3 uid="uid://fcw7si23ingw"]
+
+[ext_resource type="Script" uid="uid://803d4nlj6qif" path="res://scripts/tree.gd" id="1_vplca"]
+[ext_resource type="Texture2D" uid="uid://cuysivcmm0mjy" path="res://assets/sprites/tree.png" id="2_viusy"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_qd6xs"]
+radius = 15.0
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ake3r"]
+size = Vector2(10, 8)
+
+[node name="Tree" type="Area2D" unique_id=2078746378]
+script = ExtResource("1_vplca")
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=1659958198]
+texture = ExtResource("2_viusy")
+offset = Vector2(0, -26)
+
+[node name="ChopShape" type="CollisionShape2D" parent="." unique_id=81384943]
+position = Vector2(0, -22)
+shape = SubResource("CircleShape2D_qd6xs")
+
+[node name="TrunkBody" type="StaticBody2D" parent="." unique_id=983034704]
+
+[node name="Col" type="CollisionShape2D" parent="TrunkBody" unique_id=2118379196]
+position = Vector2(0, -4)
+shape = SubResource("RectangleShape2D_ake3r")

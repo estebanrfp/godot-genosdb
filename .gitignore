@@ -1,0 +1,13 @@
+# Godot 4+
+.godot/
+/android/
+
+# Web build output
+/build/
+
+# Dev-only editor bridge (third-party, not part of this project)
+/addons/godot_ai/
+
+# OS / editor junk
+.DS_Store
+*.tmp

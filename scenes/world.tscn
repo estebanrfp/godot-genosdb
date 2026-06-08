@@ -1,0 +1,82 @@
+[gd_scene format=3 uid="uid://cl73ywsjcrthx"]
+
+[ext_resource type="Script" uid="uid://cpo5uvg0bcyrj" path="res://scripts/player.gd" id="1_71j4m"]
+[ext_resource type="Script" uid="uid://dyhf58harbqwm" path="res://scripts/world.gd" id="1_qfnet"]
+[ext_resource type="SpriteFrames" uid="uid://3s5wsyuvmixx" path="res://scenes/player_frames.tres" id="2_71j4m"]
+[ext_resource type="PackedScene" uid="uid://fcw7si23ingw" path="res://scenes/tree.tscn" id="3_i7141"]
+[ext_resource type="Script" uid="uid://c8wg2v7qkvvnu" path="res://scripts/hud.gd" id="4_4mrxx"]
+[ext_resource type="Texture2D" uid="uid://drpsqgtjkkabj" path="res://assets/sprites/log.png" id="5_7r4gi"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_w7kh3"]
+radius = 5.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_e3hyu"]
+
+[node name="World" type="Node2D" unique_id=1347732564]
+script = ExtResource("1_qfnet")
+
+[node name="Player" type="CharacterBody2D" parent="." unique_id=2001099762]
+script = ExtResource("1_71j4m")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player" unique_id=153495571]
+sprite_frames = ExtResource("2_71j4m")
+animation = &"idle_down"
+autoplay = "idle_down"
+offset = Vector2(0, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=310769213]
+position = Vector2(0, 4)
+shape = SubResource("CircleShape2D_w7kh3")
+
+[node name="ChopArea" type="Area2D" parent="Player" unique_id=1700749536]
+position = Vector2(0, 12)
+
+[node name="Col" type="CollisionShape2D" parent="Player/ChopArea" unique_id=1562141214]
+shape = SubResource("CircleShape2D_e3hyu")
+
+[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1406768735]
+zoom = Vector2(1.8, 1.8)
+position_smoothing_enabled = true
+
+[node name="Trees" type="Node2D" parent="." unique_id=1168825887]
+
+[node name="Tree1" parent="Trees" unique_id=2078746378 instance=ExtResource("3_i7141")]
+position = Vector2(-92, -34)
+
+[node name="Tree2" parent="Trees" unique_id=1153620450 instance=ExtResource("3_i7141")]
+position = Vector2(84, -62)
+
+[node name="Tree3" parent="Trees" unique_id=2095975 instance=ExtResource("3_i7141")]
+position = Vector2(132, 44)
+
+[node name="Tree4" parent="Trees" unique_id=1285940299 instance=ExtResource("3_i7141")]
+position = Vector2(-74, 78)
+
+[node name="Tree5" parent="Trees" unique_id=820196316 instance=ExtResource("3_i7141")]
+position = Vector2(36, 116)
+
+[node name="Tree6" parent="Trees" unique_id=501286194 instance=ExtResource("3_i7141")]
+position = Vector2(-150, 36)
+
+[node name="Tree7" parent="Trees" unique_id=568256352 instance=ExtResource("3_i7141")]
+position = Vector2(168, -28)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1698539659]
+script = ExtResource("4_4mrxx")
+
+[node name="Wood" type="Control" parent="HUD" unique_id=1645608023]
+layout_mode = 3
+anchors_preset = 0
+
+[node name="Icon" type="Sprite2D" parent="HUD/Wood" unique_id=190208293]
+position = Vector2(18, 16)
+texture = ExtResource("5_7r4gi")
+
+[node name="Label" type="Label" parent="HUD/Wood" unique_id=1430115732]
+layout_mode = 0
+offset_left = 30.0
+offset_top = 8.0
+offset_right = 31.0
+offset_bottom = 31.0
+theme_override_font_sizes/font_size = 16
+text = "Madera: 0"

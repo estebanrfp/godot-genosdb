@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://ipdnv1te3coh"]
+
+[ext_resource type="Script" uid="uid://b0qlx2wp53cig" path="res://scripts/remote_player.gd" id="1_n407u"]
+[ext_resource type="SpriteFrames" uid="uid://3s5wsyuvmixx" path="res://scenes/player_frames.tres" id="2_bbtsb"]
+
+[node name="Remote" type="Node2D" unique_id=384903357]
+script = ExtResource("1_n407u")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1520157316]
+modulate = Color(0.7490196, 0.8784314, 1, 1)
+sprite_frames = ExtResource("2_bbtsb")
+animation = &"idle_down"
+autoplay = "idle_down"
+offset = Vector2(0, -6)
+
+[node name="Label" type="Label" parent="." unique_id=293338861]
+offset_left = -20.0
+offset_top = -38.0
+offset_right = 20.0
+offset_bottom = -15.0
+theme_override_font_sizes/font_size = 8
+text = "peer"
+horizontal_alignment = 1
