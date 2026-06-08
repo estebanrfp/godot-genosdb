@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cdogv4fo5pqpx"
-path="res://.godot/imported/grass_bg.png-c615806b142d07b9881de0eadbcb12a5.ctex"
+uid="uid://c716w615xq53j"
+path="res://.godot/imported/fence_f.png-ffbe9f1b8bf3d4bbd28597d127b3b46e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/grass_bg.png"
-dest_files=["res://.godot/imported/grass_bg.png-c615806b142d07b9881de0eadbcb12a5.ctex"]
+source_file="res://assets/farm/fence_f.png"
+dest_files=["res://.godot/imported/fence_f.png-ffbe9f1b8bf3d4bbd28597d127b3b46e.ctex"]
 
 [params]
 

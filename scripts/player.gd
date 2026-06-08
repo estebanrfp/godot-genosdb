@@ -44,6 +44,9 @@ func _physics_process(delta: float) -> void:
 			anim.flip_h = false
 		chop_area.position = facing * 12.0
 	move_and_slide()
+	# Keep the farmer inside the farm bounds (matches the ground + camera limits).
+	global_position.x = clampf(global_position.x, 12.0, 756.0)
+	global_position.y = clampf(global_position.y, 24.0, 470.0)
 
 	if chop_timer > 0.0:
 		chop_timer -= delta

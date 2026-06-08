@@ -39,7 +39,7 @@ const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
 const WOOD_PER_TREE := 1      ## one felled tree = +1 (the shared total = trees felled)
 
-@onready var player: CharacterBody2D = $Player
+@onready var player: CharacterBody2D = $YSort/Player
 
 var _remotes: Dictionary = {}     ## peerId -> remote farmer node
 var _last_seen: Dictionary = {}   ## peerId -> last update time (ms)
@@ -48,10 +48,11 @@ var _fells: Dictionary = {}       ## fell event id -> true (for the shared wood 
 var _send_accum := 0.0
 
 func _ready() -> void:
-	for t in $Trees.get_children():
+	for t in get_tree().get_nodes_in_group("tree"):
 		var tid: Variant = t.get("tree_id")
 		if tid != null and tid != "":
 			_trees[tid] = t
+	_build_decor()
 	Net.peer_join.connect(_on_peer_join)
 	Net.peer_leave.connect(_on_peer_leave)
 	Net.message.connect(_on_message)
@@ -79,7 +80,7 @@ func _on_peer_join(id: String) -> void:
 		return
 	var r := REMOTE_PLAYER.instantiate()
 	r.name = "Remote_" + id.substr(0, 6)
-	add_child(r)
+	$YSort.add_child(r)         # under the y-sorted node so depth is correct
 	r.set_label(id.substr(0, 4))
 	_remotes[id] = r
 	_last_seen[id] = Time.get_ticks_msec()
@@ -137,3 +138,51 @@ func reset_world() -> void:
 		var t: Node = _trees[tree_id]
 		if is_instance_valid(t):
 			Net.put({"type": "tree", "hp": t.max_hp}, tree_id)
+
+# --- Decorative cozy-farm props (CC0 Ishtar Pixels pack) ---
+
+## Add a decorative sprite under the y-sorted node. `off` lifts the art so the
+## node origin sits at the prop's base (its feet) for correct depth sorting.
+func _add_prop(path: String, pos: Vector2, off: Vector2) -> Sprite2D:
+	var s := Sprite2D.new()
+	s.texture = load(path)
+	s.offset = off
+	s.position = pos
+	$YSort.add_child(s)
+	return s
+
+func _build_decor() -> void:
+	var P := "res://assets/farm/"
+	# House (80x96) with a solid footprint so players can't walk through it.
+	var house := _add_prop(P + "house.png", Vector2(118, 150), Vector2(0, -48))
+	var body := StaticBody2D.new()
+	var col := CollisionShape2D.new()
+	var shape := RectangleShape2D.new()
+	shape.size = Vector2(70, 26)
+	col.shape = shape
+	col.position = Vector2(0, -13)
+	body.add_child(col)
+	house.add_child(body)
+	# Scattered rocks, logs and a sign for cozy detail.
+	_add_prop(P + "rock_grey.png", Vector2(168, 196), Vector2(0, -6))
+	_add_prop(P + "rock_brown.png", Vector2(250, 432), Vector2(0, -6))
+	_add_prop(P + "rock_grey2.png", Vector2(700, 360), Vector2(0, -6))
+	_add_prop(P + "log.png", Vector2(190, 150), Vector2(0, -6))
+	_add_prop(P + "wood.png", Vector2(225, 95), Vector2(0, -6))
+	_add_prop(P + "sign.png", Vector2(372, 250), Vector2(0, -8))
+
+	# Fenced crop field (bottom-right tilled plot).
+	var fx0 := 456; var fx1 := 648; var fy0 := 280; var fy1 := 408
+	for x in range(fx0, fx1 + 1, 16):
+		_add_prop(P + "fence_f.png", Vector2(x, fy0), Vector2(0, -8))   # top rail
+		_add_prop(P + "fence_f.png", Vector2(x, fy1), Vector2(0, -8))   # bottom rail
+	for y in range(fy0 + 16, fy1, 16):
+		_add_prop(P + "fence_g.png", Vector2(fx0, y), Vector2(0, -8))   # left posts
+		_add_prop(P + "fence_g.png", Vector2(fx1, y), Vector2(0, -8))   # right posts
+	# Rows of crops inside the field.
+	var crops := [P + "crop_bush.png", P + "crop_stalk.png", P + "crop_sprout.png"]
+	var ci := 0
+	for cy in range(fy0 + 24, fy1 - 8, 22):
+		for cx in range(fx0 + 22, fx1 - 10, 26):
+			_add_prop(crops[ci % crops.size()], Vector2(cx, cy), Vector2(0, -8))
+			ci += 1

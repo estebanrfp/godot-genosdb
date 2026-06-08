@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://fcw7si23ingw" path="res://scenes/tree.tscn" id="3_i7141"]
 [ext_resource type="Script" uid="uid://c8wg2v7qkvvnu" path="res://scripts/hud.gd" id="4_4mrxx"]
 [ext_resource type="Texture2D" uid="uid://drpsqgtjkkabj" path="res://assets/sprites/log.png" id="5_7r4gi"]
-[ext_resource type="Texture2D" uid="uid://cdogv4fo5pqpx" path="res://assets/sprites/grass_bg.png" id="6_grass"]
+[ext_resource type="Texture2D" uid="uid://cev3j151nq3js" path="res://assets/farm/ground.png" id="6_ground"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_w7kh3"]
 radius = 5.0
@@ -17,58 +17,61 @@ radius = 5.0
 script = ExtResource("1_qfnet")
 
 [node name="Ground" type="Sprite2D" parent="." unique_id=999000111]
-texture_filter = 1
-texture_repeat = 2
 z_index = -10
-region_enabled = true
-region_rect = Rect2(0, 0, 100000, 100000)
-texture = ExtResource("6_grass")
+centered = false
+texture = ExtResource("6_ground")
 
-[node name="Player" type="CharacterBody2D" parent="." unique_id=2001099762]
+[node name="YSort" type="Node2D" parent="." unique_id=222000333]
+y_sort_enabled = true
+
+[node name="Player" type="CharacterBody2D" parent="YSort" unique_id=2001099762]
+position = Vector2(300, 232)
 script = ExtResource("1_71j4m")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player" unique_id=153495571]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="YSort/Player" unique_id=153495571]
 sprite_frames = ExtResource("2_71j4m")
 animation = &"idle_down"
 autoplay = "idle_down"
 offset = Vector2(0, -6)
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Player" unique_id=310769213]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="YSort/Player" unique_id=310769213]
 position = Vector2(0, 4)
 shape = SubResource("CircleShape2D_w7kh3")
 
-[node name="ChopArea" type="Area2D" parent="Player" unique_id=1700749536]
+[node name="ChopArea" type="Area2D" parent="YSort/Player" unique_id=1700749536]
 position = Vector2(0, 12)
 
-[node name="Col" type="CollisionShape2D" parent="Player/ChopArea" unique_id=1562141214]
+[node name="Col" type="CollisionShape2D" parent="YSort/Player/ChopArea" unique_id=1562141214]
 shape = SubResource("CircleShape2D_e3hyu")
 
-[node name="Camera2D" type="Camera2D" parent="Player" unique_id=1406768735]
+[node name="Camera2D" type="Camera2D" parent="YSort/Player" unique_id=1406768735]
 zoom = Vector2(1.8, 1.8)
+limit_left = 0
+limit_top = 0
+limit_right = 768
+limit_bottom = 480
 position_smoothing_enabled = true
 
-[node name="Trees" type="Node2D" parent="." unique_id=1168825887]
+[node name="Tree1" parent="YSort" unique_id=2078746378 instance=ExtResource("3_i7141")]
+position = Vector2(110, 250)
 
-[node name="Tree1" parent="Trees" unique_id=2078746378 instance=ExtResource("3_i7141")]
-position = Vector2(-92, -34)
+[node name="Tree2" parent="YSort" unique_id=1153620450 instance=ExtResource("3_i7141")]
+position = Vector2(70, 384)
 
-[node name="Tree2" parent="Trees" unique_id=1153620450 instance=ExtResource("3_i7141")]
-position = Vector2(84, -62)
+[node name="Tree3" parent="YSort" unique_id=2095975 instance=ExtResource("3_i7141")]
+position = Vector2(205, 322)
 
-[node name="Tree3" parent="Trees" unique_id=2095975 instance=ExtResource("3_i7141")]
-position = Vector2(132, 44)
+[node name="Tree4" parent="YSort" unique_id=1285940299 instance=ExtResource("3_i7141")]
+position = Vector2(300, 92)
 
-[node name="Tree4" parent="Trees" unique_id=1285940299 instance=ExtResource("3_i7141")]
-position = Vector2(-74, 78)
+[node name="Tree5" parent="YSort" unique_id=820196316 instance=ExtResource("3_i7141")]
+position = Vector2(512, 90)
 
-[node name="Tree5" parent="Trees" unique_id=820196316 instance=ExtResource("3_i7141")]
-position = Vector2(36, 116)
+[node name="Tree6" parent="YSort" unique_id=501286194 instance=ExtResource("3_i7141")]
+position = Vector2(690, 82)
 
-[node name="Tree6" parent="Trees" unique_id=501286194 instance=ExtResource("3_i7141")]
-position = Vector2(-150, 36)
-
-[node name="Tree7" parent="Trees" unique_id=568256352 instance=ExtResource("3_i7141")]
-position = Vector2(168, -28)
+[node name="Tree7" parent="YSort" unique_id=568256352 instance=ExtResource("3_i7141")]
+position = Vector2(712, 286)
 
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1698539659]
 script = ExtResource("4_4mrxx")

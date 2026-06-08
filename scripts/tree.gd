@@ -14,16 +14,27 @@ extends Area2D
 
 const REGROW_TIME := 8.0   ## seconds a felled tree stays down before growing back
 
+## Pack tree variants (CC0). Picked deterministically by tree_id so every peer
+## sees the same tree in the same spot.
+const TREE_TEXTURES := [
+	"res://assets/farm/tree_orange.png",
+	"res://assets/farm/tree_yellow.png",
+	"res://assets/farm/tree_red.png",
+	"res://assets/farm/tree_green.png",
+]
+
 var hp := 0
 var _fallen := false
 
 @onready var sprite: Sprite2D = $Sprite2D
+@onready var _trunk: CollisionShape2D = $TrunkBody/Col
 
 func _ready() -> void:
 	add_to_group("tree")
 	hp = max_hp
 	if tree_id == "":
 		tree_id = name
+	sprite.texture = load(TREE_TEXTURES[abs(tree_id.hash()) % TREE_TEXTURES.size()])
 
 ## Local chop: lower hp and share the tree state. Only when the tree actually
 ## FALLS (hp <= 0) do we record a unique fell event, so the shared wood total
@@ -65,6 +76,7 @@ func _topple() -> void:
 		return
 	_fallen = true
 	monitoring = false                  # stop being choppable while down
+	_trunk.set_deferred("disabled", true)   # let players walk over the fallen spot
 	var t := create_tween()
 	t.set_parallel(true)
 	t.tween_property(sprite, "rotation", 1.2, 0.25)
@@ -79,6 +91,7 @@ func _regrow() -> void:
 	_fallen = false
 	hp = max_hp
 	monitoring = true
+	_trunk.set_deferred("disabled", false)
 	sprite.rotation = 0.0
 	var t := create_tween()
 	t.tween_property(sprite, "modulate:a", 1.0, 0.3)
