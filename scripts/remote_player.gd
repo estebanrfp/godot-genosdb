@@ -1,15 +1,25 @@
 extends Node2D
 
 ## A non-controllable farmer driven by a peer's network state. Hidden until its
-## first position arrives (so peers don't pile up at 0,0), tinted with the peer's
-## broadcast color, and its name label gets an outline + matching color so
-## overlapping labels stay readable.
+## first position arrives, shows the peer's broadcast character variant, and bobs/
+## hops procedurally. Its name label has an outline so overlapping labels stay
+## readable.
 
-@onready var anim: AnimatedSprite2D = $AnimatedSprite2D
+const CHARS := [
+	"res://assets/farm/farmer_red.png",
+	"res://assets/farm/farmer_blonde.png",
+	"res://assets/farm/farmer_green.png",
+]
+
+@onready var sprite: Sprite2D = $Sprite
 @onready var label: Label = $Label
 
 var _target := Vector2.ZERO
 var _init := false
+var _moving := false
+var _flip := false
+var _char := -1
+var _t := 0.0
 
 func _ready() -> void:
 	visible = false
@@ -19,20 +29,29 @@ func _ready() -> void:
 func set_label(text: String) -> void:
 	label.text = text
 
-## Apply a state packet {x, y, a(nim), f(lip), c(olor)} from the owning peer.
+## Apply a state packet {x, y, f(lip), ch(ar), mv(moving)} from the owning peer.
 func receive_state(data: Dictionary) -> void:
 	_target = Vector2(float(data.get("x", 0.0)), float(data.get("y", 0.0)))
+	_flip = bool(data.get("f", false))
+	_moving = bool(data.get("mv", false))
+	var ci := int(data.get("ch", 0))
+	if ci != _char:
+		_char = ci
+		sprite.texture = load(CHARS[ci % CHARS.size()])
 	if not _init:
 		global_position = _target   # snap on first packet
 		_init = true
 		visible = true
-	anim.play(str(data.get("a", "idle_down")))
-	anim.flip_h = bool(data.get("f", false))
-	if data.has("c"):
-		var col := Color.html(str(data["c"]))
-		anim.modulate = col
-		label.add_theme_color_override("font_color", col.lightened(0.35))
 
 func _process(delta: float) -> void:
-	if _init:
-		global_position = global_position.lerp(_target, 1.0 - exp(-14.0 * delta))
+	if not _init:
+		return
+	global_position = global_position.lerp(_target, 1.0 - exp(-14.0 * delta))
+	_t += delta
+	sprite.flip_h = _flip
+	if _moving:
+		sprite.position.y = -absf(sin(_t * 14.0)) * 3.0
+		sprite.scale = Vector2(1.0, 1.0 + sin(_t * 14.0) * 0.05)
+	else:
+		sprite.position.y = sin(_t * 3.0) * 0.6
+		sprite.scale = Vector2.ONE

@@ -2,7 +2,6 @@
 
 [ext_resource type="Script" uid="uid://cpo5uvg0bcyrj" path="res://scripts/player.gd" id="1_71j4m"]
 [ext_resource type="Script" uid="uid://dyhf58harbqwm" path="res://scripts/world.gd" id="1_qfnet"]
-[ext_resource type="SpriteFrames" uid="uid://3s5wsyuvmixx" path="res://scenes/player_frames.tres" id="2_71j4m"]
 [ext_resource type="PackedScene" uid="uid://fcw7si23ingw" path="res://scenes/tree.tscn" id="3_i7141"]
 [ext_resource type="Script" uid="uid://c8wg2v7qkvvnu" path="res://scripts/hud.gd" id="4_4mrxx"]
 [ext_resource type="Texture2D" uid="uid://drpsqgtjkkabj" path="res://assets/sprites/log.png" id="5_7r4gi"]
@@ -28,11 +27,8 @@ y_sort_enabled = true
 position = Vector2(300, 232)
 script = ExtResource("1_71j4m")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="YSort/Player" unique_id=153495571]
-sprite_frames = ExtResource("2_71j4m")
-animation = &"idle_down"
-autoplay = "idle_down"
-offset = Vector2(0, -6)
+[node name="Sprite" type="Sprite2D" parent="YSort/Player" unique_id=153495571]
+offset = Vector2(0, -16)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="YSort/Player" unique_id=310769213]
 position = Vector2(0, 4)
