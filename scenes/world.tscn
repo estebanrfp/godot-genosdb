@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://fcw7si23ingw" path="res://scenes/tree.tscn" id="3_i7141"]
 [ext_resource type="Script" uid="uid://c8wg2v7qkvvnu" path="res://scripts/hud.gd" id="4_4mrxx"]
 [ext_resource type="Texture2D" uid="uid://drpsqgtjkkabj" path="res://assets/sprites/log.png" id="5_7r4gi"]
+[ext_resource type="Texture2D" uid="uid://cdogv4fo5pqpx" path="res://assets/sprites/grass_bg.png" id="6_grass"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_w7kh3"]
 radius = 5.0
@@ -14,6 +15,14 @@ radius = 5.0
 
 [node name="World" type="Node2D" unique_id=1347732564]
 script = ExtResource("1_qfnet")
+
+[node name="Ground" type="Sprite2D" parent="." unique_id=999000111]
+texture_filter = 1
+texture_repeat = 2
+z_index = -10
+region_enabled = true
+region_rect = Rect2(0, 0, 100000, 100000)
+texture = ExtResource("6_grass")
 
 [node name="Player" type="CharacterBody2D" parent="." unique_id=2001099762]
 script = ExtResource("1_71j4m")
