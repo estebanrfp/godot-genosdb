@@ -62,6 +62,23 @@ func _on_graph(id, action, data): ...   # action: initial|added|updated|removed
 All methods are safe no-ops off the Web, so the same code runs in the editor and
 on desktop (single-player) and lights up P2P only on the Web build.
 
+## Custom Nostr relays (recommended for production)
+
+GenosDB discovers peers through public **Nostr relays**. The built-in defaults
+work out of the box, but they are community relays that can change or go offline.
+For production — or just to be safe — pass your own relay list to `join()`:
+
+```gdscript
+Net.join("my-room", [
+    "wss://relay.your-domain.com",
+    "wss://relay.damus.io",
+])
+```
+
+This pins peer discovery to relays you trust (or run yourself), so your game keeps
+working even if GenosDB's default relays change. You can host your own — see the
+GenosDB Nostr relay guide. Leave the list empty to use the defaults.
+
 ## Author
 
 Esteban Fuster Pozzi (@estebanrfp) — Full Stack JavaScript Developer

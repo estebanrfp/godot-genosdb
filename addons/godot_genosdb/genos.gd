@@ -7,6 +7,7 @@ extends Node
 ## GenosDB API:
 ##   GenosDB (JS)                    ->  Godot (Net)
 ##   await gdb(name, {rtc:true})     ->  Net.join(name)
+##   ... + { relayUrls: [...] }      ->  Net.join(name, ["wss://relay", ...])
 ##   room.on('peer:join'/'leave')    ->  signals peer_join / peer_leave
 ##   channel.send(data)              ->  Net.send(data)            (ephemeral)
 ##   channel.on('message', cb)       ->  signal message(id, data)  (ephemeral)
@@ -25,6 +26,7 @@ var enabled := false
 var ready_bridge := false
 
 var _pending_room := ""
+var _pending_relays: Array = []
 var _w: JavaScriptObject
 var _callbacks: Array = []   # keep JS callback refs alive
 
@@ -45,20 +47,26 @@ func _make(c: Callable) -> JavaScriptObject:
 
 ## Open a room (= a GenosDB instance named `room_id`). All peers using the same
 ## id share the world. Retries until the injected bridge module has loaded.
-func join(room_id: String) -> void:
+##
+## `relays` (optional): a list of custom Nostr relay URLs for peer discovery,
+## e.g. ["wss://relay.example.com"]. Recommended for production — it pins
+## discovery to relays you trust/run, so the game keeps working even if GenosDB's
+## default community relays change or go offline. Empty = GenosDB defaults.
+func join(room_id: String, relays: Array = []) -> void:
 	if not enabled:
 		return
 	_pending_room = room_id
+	_pending_relays = relays
 	_try_join()
 
 func _try_join() -> void:
 	if bool(_w.__bridgeReady):
-		_w.NetJoin(_pending_room)
+		_w.NetJoin(_pending_room, JSON.stringify(_pending_relays))
 		ready_bridge = true
 	else:
 		get_tree().create_timer(0.2).timeout.connect(_try_join, CONNECT_ONE_SHOT)
 
-## EPHEMERAL — broadcast to every peer (GenosRTC data channel). Not stored.
+## EPHEMERAL — broadcast to all peers (GenosRTC data channel). Not stored.
 func send(data: Dictionary) -> void:
 	if enabled and ready_bridge:
 		_w.NetSend(JSON.stringify(data))

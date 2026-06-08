@@ -17,9 +17,17 @@ function startMap(query) {
   });
 }
 
-window.NetJoin = async (roomId) => {
+window.NetJoin = async (roomId, relaysJson) => {
   try {
-    db = await gdb(roomId, { rtc: true });   // the room id is the GenosDB name
+    // Optional custom Nostr relays for peer discovery (recommended for
+    // production, so it keeps working if GenosDB's default relays change).
+    const opts = { rtc: true };
+    try {
+      const relays = JSON.parse(relaysJson || "[]");
+      if (Array.isArray(relays) && relays.length) opts.relayUrls = relays;
+    } catch (_) {}
+
+    db = await gdb(roomId, opts);            // the room id is the GenosDB name
     channel = db.room.channel("state");
 
     db.room.on("peer:join",  (id) => { try { window.gdOnJoin  && window.gdOnJoin(id);  } catch (e) { console.error(e); } });
@@ -31,7 +39,7 @@ window.NetJoin = async (roomId) => {
 
     for (const q of pendingMaps) startMap(q);   // apply maps requested before join finished
     pendingMaps = [];
-    console.log("[GenosDB] joined room:", roomId);
+    console.log("[GenosDB] joined room:", roomId, opts.relayUrls ? "(custom relays)" : "(default relays)");
   } catch (e) { console.error("[GenosDB] join failed:", e); }
 };
 
