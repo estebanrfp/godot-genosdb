@@ -27,8 +27,7 @@ func chop(dmg: int = 1) -> void:
 	_shake()
 	Net.put({"type": "tree", "hp": hp}, tree_id)   # GenosDB db.put(node, id)
 	if hp <= 0:
-		_reward_local()
-		_topple()
+		_topple()   # shared wood is derived from the graph by world.gd
 
 func apply_remote(data: Dictionary) -> void:
 	if _fallen:
@@ -38,11 +37,6 @@ func apply_remote(data: Dictionary) -> void:
 		_topple()
 	else:
 		_shake()
-
-func _reward_local() -> void:
-	var players := get_tree().get_nodes_in_group("player")
-	if not players.is_empty():
-		players[0].add_wood(wood_drop)
 
 func _shake() -> void:
 	var t := create_tween()

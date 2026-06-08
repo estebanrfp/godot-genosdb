@@ -2,17 +2,26 @@ extends Node2D
 
 ## Demo orchestrator. Uses the godot_genosdb API, which mirrors GenosDB:
 ##   positions -> Net.send (ephemeral channel)   trees -> Net.put / Net.map (graph)
+##
+## SHARED WOOD: the wood total is a co-op team value derived from the graph
+## (chopped trees * WOOD_PER_TREE). Because tree state already syncs P2P (and
+## persists, with late-joiners getting it via 'initial'), the total is correct on
+## every peer with no race conditions — whoever chops, everyone's count goes up.
+
+signal wood_changed(total: int)
 
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
 const ROOM_ID := "genosdb-farm-demo"
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
+const WOOD_PER_TREE := 2
 
 @onready var player: CharacterBody2D = $Player
 
 var _remotes: Dictionary = {}     ## peerId -> remote farmer node
 var _last_seen: Dictionary = {}   ## peerId -> last update time (ms)
 var _trees: Dictionary = {}       ## tree_id -> tree node
+var _chopped: Dictionary = {}     ## tree_id -> true (for the shared wood total)
 var _send_accum := 0.0
 
 func _ready() -> void:
@@ -76,7 +85,7 @@ func _drop(id: String) -> void:
 		_remotes.erase(id)
 	_last_seen.erase(id)
 
-# --- Trees (persistent graph) ---
+# --- Trees + shared wood (persistent graph) ---
 
 func _on_graph(id: String, _action: String, data: Dictionary) -> void:
 	if data.get("type", "") != "tree":
@@ -84,3 +93,7 @@ func _on_graph(id: String, _action: String, data: Dictionary) -> void:
 	var t: Node = _trees.get(id)
 	if t and is_instance_valid(t):
 		t.apply_remote(data)
+	# Shared, race-free wood total: count chopped trees from the synced graph.
+	if int(data.get("hp", 1)) <= 0 and not _chopped.has(id):
+		_chopped[id] = true
+		wood_changed.emit(_chopped.size() * WOOD_PER_TREE)

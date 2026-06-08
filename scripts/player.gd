@@ -7,11 +7,8 @@ extends CharacterBody2D
 const SPEED := 82.0
 const CHOP_TIME := 0.32
 
-signal wood_changed(amount: int)
-
 var facing := Vector2.DOWN
 var dir_name := "down"
-var wood := 0
 var chop_timer := 0.0
 var color := Color.WHITE
 
@@ -71,7 +68,3 @@ func _chop() -> void:
 		if a.is_in_group("tree") and a.has_method("chop"):
 			a.chop(1)
 			break
-
-func add_wood(n: int) -> void:
-	wood += n
-	wood_changed.emit(wood)
