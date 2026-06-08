@@ -71,8 +71,6 @@ practice is to pass your own relay list**, to not depend on the defaults:
 
 ```gdscript
 Net.join("my-room", [
-    "wss://black.nostrcity.club",
-    "wss://eu.purplerelay.com",
     "wss://ftp.halifax.rwth-aachen.de/nostr",
     "wss://nostr.data.haus",
     "wss://nostr.mom",

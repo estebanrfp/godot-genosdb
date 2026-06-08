@@ -19,8 +19,6 @@ const ROOM_ID := "genosdb-farm-demo"
 ## This is the same list GenosRTC uses and is currently working. (Empty list = use
 ## GenosDB's defaults.) See addons/godot_genosdb/README.md.
 const RELAYS := [
-	"wss://black.nostrcity.club",
-	"wss://eu.purplerelay.com",
 	"wss://ftp.halifax.rwth-aachen.de/nostr",
 	"wss://nostr.data.haus",
 	"wss://nostr.mom",
