@@ -3,10 +3,11 @@ extends Node2D
 ## Demo orchestrator. Uses the godot_genosdb API, which mirrors GenosDB:
 ##   positions -> Net.send (ephemeral channel)   trees -> Net.put / Net.map (graph)
 ##
-## SHARED WOOD: the wood total is a co-op team value derived from the graph
-## (chopped trees * WOOD_PER_TREE). Because tree state already syncs P2P (and
-## persists, with late-joiners getting it via 'initial'), the total is correct on
-## every peer with no race conditions — whoever chops, everyone's count goes up.
+## SHARED WOOD: the wood total is a co-op team value derived from the graph by
+## counting unique "chop" event nodes (a race-free grow-only counter). Every chop
+## writes its own node, so concurrent chops never clobber each other, and trees can
+## regrow and be chopped again while the total keeps climbing. Late-joiners get the
+## full history via 'initial', so everyone sees the same total.
 
 signal wood_changed(total: int)
 
@@ -36,14 +37,14 @@ const RELAYS := [
 
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
-const WOOD_PER_TREE := 2
+const WOOD_PER_CHOP := 2      ## wood gained per chop, multiplied into the shared total
 
 @onready var player: CharacterBody2D = $Player
 
 var _remotes: Dictionary = {}     ## peerId -> remote farmer node
 var _last_seen: Dictionary = {}   ## peerId -> last update time (ms)
 var _trees: Dictionary = {}       ## tree_id -> tree node
-var _chopped: Dictionary = {}     ## tree_id -> true (for the shared wood total)
+var _chops: Dictionary = {}       ## chop event id -> true (for the shared wood total)
 var _send_accum := 0.0
 
 func _ready() -> void:
@@ -109,13 +110,14 @@ func _drop(id: String) -> void:
 
 # --- Trees + shared wood (persistent graph) ---
 
-func _on_graph(id: String, _action: String, data: Dictionary) -> void:
-	if data.get("type", "") != "tree":
-		return
-	var t: Node = _trees.get(id)
-	if t and is_instance_valid(t):
-		t.apply_remote(data)
-	# Shared, race-free wood total: count chopped trees from the synced graph.
-	if int(data.get("hp", 1)) <= 0 and not _chopped.has(id):
-		_chopped[id] = true
-		wood_changed.emit(_chopped.size() * WOOD_PER_TREE)
+func _on_graph(id: String, action: String, data: Dictionary) -> void:
+	match data.get("type", ""):
+		"tree":
+			var t: Node = _trees.get(id)
+			if t and is_instance_valid(t):
+				t.apply_remote(data)
+		"chop":
+			# Shared, race-free wood total: count unique chop events from the graph.
+			if action != "removed" and not _chops.has(id):
+				_chops[id] = true
+				wood_changed.emit(_chops.size() * WOOD_PER_CHOP)
