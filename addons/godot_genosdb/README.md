@@ -62,22 +62,38 @@ func _on_graph(id, action, data): ...   # action: initial|added|updated|removed
 All methods are safe no-ops off the Web, so the same code runs in the editor and
 on desktop (single-player) and lights up P2P only on the Web build.
 
-## Custom Nostr relays (recommended for production)
+## Custom Nostr relays (recommended practice)
 
-GenosDB discovers peers through public **Nostr relays**. The built-in defaults
-work out of the box, but they are community relays that can change or go offline.
-For production — or just to be safe — pass your own relay list to `join()`:
+GenosDB discovers peers through public **Nostr relays**. GenosDB already ships its
+own list of working relays, so `Net.join("my-room")` works out of the box. But that
+built-in list is community-run and may be updated over time — so the **recommended
+practice is to pass your own relay list**, to not depend on the defaults:
 
 ```gdscript
 Net.join("my-room", [
-    "wss://relay.your-domain.com",
+    "wss://black.nostrcity.club",
+    "wss://eu.purplerelay.com",
+    "wss://ftp.halifax.rwth-aachen.de/nostr",
+    "wss://nostr.data.haus",
+    "wss://nostr.mom",
+    "wss://nostr.oxtr.dev",
+    "wss://nostr.sathoarder.com",
+    "wss://nostr.vulpem.com",
+    "wss://relay.binaryrobot.com",
+    "wss://relay.fountain.fm",
+    "wss://relay.mostro.network",
+    "wss://relay.nostrdice.com",
+    "wss://sendit.nosflare.com",
+    "wss://yabu.me/v2",
     "wss://relay.damus.io",
 ])
 ```
 
-This pins peer discovery to relays you trust (or run yourself), so your game keeps
-working even if GenosDB's default relays change. You can host your own — see the
-GenosDB Nostr relay guide. Leave the list empty to use the defaults.
+The list above is the same one GenosRTC uses internally and is **currently working** —
+a safe starting point. Most public Nostr relays are **free**; pick a few you trust
+(or run your own) so peer discovery keeps working regardless of what GenosDB's
+defaults do. The bundled demo (`scripts/world.gd`) passes this exact list so you can
+copy the pattern. Leave the list empty to fall back to GenosDB's defaults.
 
 ## Author
 

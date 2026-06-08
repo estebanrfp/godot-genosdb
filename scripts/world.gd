@@ -13,9 +13,11 @@ signal wood_changed(total: int)
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
 const ROOM_ID := "genosdb-farm-demo"
 
-## Good practice: pass your own Nostr relays so peer discovery keeps working even
-## if GenosDB's built-in defaults change or go offline. (Pass an empty list to use
-## the defaults.) See addons/godot_genosdb/README.md.
+## Recommended practice: pass your own Nostr relays. GenosDB ships its own working
+## list, but those community relays may be updated over time — passing your own
+## (most public relays are free) means peer discovery doesn't depend on the defaults.
+## This is the same list GenosRTC uses and is currently working. (Empty list = use
+## GenosDB's defaults.) See addons/godot_genosdb/README.md.
 const RELAYS := [
 	"wss://black.nostrcity.club",
 	"wss://eu.purplerelay.com",

@@ -44,9 +44,11 @@ window** (and stays fallen, even for someone who joins later).
 > No npm, no bundling: the bridge loads GenosDB from a CDN. No signaling server:
 > GenosDB uses decentralized Nostr relays.
 >
-> **Production tip:** pin your own Nostr relays so it keeps working even if the
-> defaults change — `Net.join("room", ["wss://your-relay.com"])`. See the
-> [plugin docs](addons/godot_genosdb/README.md#custom-nostr-relays-recommended-for-production).
+> **Recommended practice:** GenosDB ships its own working relay list, but those
+> community relays may be updated over time. To not depend on them, pass your own
+> public relays (most are free) — `Net.join("room", ["wss://relay.damus.io", ...])`.
+> The demo passes the same list GenosRTC uses. See the
+> [plugin docs](addons/godot_genosdb/README.md#custom-nostr-relays-recommended-practice).
 
 ### Use it in code (the API mirrors GenosDB)
 
