@@ -99,3 +99,17 @@ offset_right = -8.0
 offset_bottom = 36.0
 grow_horizontal = 0
 text = "Reset"
+
+[node name="Chat" type="LineEdit" parent="HUD" unique_id=552113077]
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -224.0
+offset_top = -40.0
+offset_right = -8.0
+offset_bottom = -8.0
+grow_horizontal = 0
+grow_vertical = 0
+placeholder_text = "Press Enter to chat…"
+max_length = 80

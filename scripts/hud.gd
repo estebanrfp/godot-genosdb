@@ -6,6 +6,7 @@ extends CanvasLayer
 
 @onready var label: Label = $Wood/Label
 @onready var reset_button: Button = $Reset
+@onready var chat_input: LineEdit = $Chat
 
 func _ready() -> void:
 	# The HUD is a child of the World node, which owns the shared world state.
@@ -14,6 +15,12 @@ func _ready() -> void:
 	reset_button.pressed.connect(func() -> void:
 		Sfx.play("reset")
 		world.reset_world()
+	)
+	# Chat: Enter sends the message (P2P) and releases focus so you can move again.
+	chat_input.text_submitted.connect(func(text: String) -> void:
+		world.send_chat(text)
+		chat_input.clear()
+		chat_input.release_focus()
 	)
 
 func _on_wood_changed(total: int) -> void:

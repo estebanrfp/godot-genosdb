@@ -91,8 +91,22 @@ func _on_message(id: String, data: Dictionary) -> void:
 		_on_peer_join(id)
 	_last_seen[id] = Time.get_ticks_msec()
 	var r: Node = _remotes.get(id)
-	if r:
-		r.receive_state(data)
+	if r == null:
+		return
+	if data.has("chat"):
+		r.say(str(data["chat"]))     # chat bubble over the peer's farmer
+	else:
+		r.receive_state(data)        # position/animation update
+
+## Broadcast a chat message over the GenosDB channel and show it locally.
+func send_chat(text: String) -> void:
+	var msg := text.strip_edges()
+	if msg.is_empty():
+		return
+	if msg.length() > 80:
+		msg = msg.substr(0, 80)
+	player.say(msg)
+	Net.send({"chat": msg})
 
 ## Remove peers that left without a clean peer:leave (closed tab, lost connection).
 func _cull_stale() -> void:

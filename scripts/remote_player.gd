@@ -10,15 +10,22 @@ extends Node2D
 
 var _target := Vector2.ZERO
 var _init := false
+var _bubble: SpeechBubble
 
 func _ready() -> void:
 	anim.sprite_frames = FarmerFrames.get_frames()
 	visible = false
 	label.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.9))
 	label.add_theme_constant_override("outline_size", 4)
+	_bubble = SpeechBubble.new()
+	add_child(_bubble)
 
 func set_label(text: String) -> void:
 	label.text = text
+
+## Show a chat message in a bubble above this peer's farmer.
+func say(msg: String) -> void:
+	_bubble.show_message(msg)
 
 ## Apply a state packet {x, y, a(nim)} from the owning peer.
 func receive_state(data: Dictionary) -> void:

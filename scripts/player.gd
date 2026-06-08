@@ -15,13 +15,23 @@ var chop_timer := 0.0
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 @onready var chop_area: Area2D = $ChopArea
 
+var _bubble: SpeechBubble
+
 func _ready() -> void:
 	add_to_group("player")
 	anim.sprite_frames = FarmerFrames.get_frames()
 	anim.play("idle_down")
+	_bubble = SpeechBubble.new()
+	add_child(_bubble)
+
+## Show a chat message in a bubble above this player.
+func say(msg: String) -> void:
+	_bubble.show_message(msg)
 
 func _physics_process(delta: float) -> void:
-	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
+	# Ignore movement/chop keys while typing in the chat box.
+	var typing := get_viewport().gui_get_focus_owner() is LineEdit
+	var input := Vector2.ZERO if typing else Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	velocity = input * SPEED
 	if input != Vector2.ZERO:
 		if absf(input.x) > absf(input.y):
@@ -36,7 +46,7 @@ func _physics_process(delta: float) -> void:
 
 	if chop_timer > 0.0:
 		chop_timer -= delta
-	if Input.is_action_just_pressed("chop") and chop_timer <= 0.0:
+	if not typing and Input.is_action_just_pressed("chop") and chop_timer <= 0.0:
 		chop_timer = CHOP_TIME
 		_chop()
 
