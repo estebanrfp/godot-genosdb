@@ -7,6 +7,10 @@ reactive, persistent graph). No backend, no signaling server to run.
 The API **mirrors GenosDB on purpose** — using this plugin teaches you the real
 GenosDB API.
 
+![GenosDB Farm — P2P co-op gameplay synced across two browser windows](https://raw.githubusercontent.com/estebanrfp/godot-genosdb/main/media/demo.gif)
+
+**▶ Live demo:** https://estebanrfp.github.io/godot-genosdb/
+
 ## Install
 
 1. Copy `addons/godot_genosdb/` into your project's `addons/` folder.
