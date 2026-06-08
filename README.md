@@ -19,7 +19,7 @@ world for all — plus sound effects and ambient music. Everything is **serverle
 P2P**, and each mechanic maps to a real GenosDB call (`send` / `map` / `put` /
 `remove`). All art & audio are **CC0** (see [CREDITS.md](CREDITS.md)).
 
-<!-- ![demo](docs-media/demo.gif) -->
+![GenosDB Farm — P2P co-op gameplay synced across two browser windows](media/demo.gif)
 
 > 🧠 **Powered by [GenosDB](https://github.com/estebanrfp/gdb)** — a decentralized graph
 > database that runs entirely in your browser (P2P sync + persistence, **no server**). It's
