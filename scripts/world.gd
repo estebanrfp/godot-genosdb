@@ -12,6 +12,28 @@ signal wood_changed(total: int)
 
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
 const ROOM_ID := "genosdb-farm-demo"
+
+## Good practice: pass your own Nostr relays so peer discovery keeps working even
+## if GenosDB's built-in defaults change or go offline. (Pass an empty list to use
+## the defaults.) See addons/godot_genosdb/README.md.
+const RELAYS := [
+	"wss://black.nostrcity.club",
+	"wss://eu.purplerelay.com",
+	"wss://ftp.halifax.rwth-aachen.de/nostr",
+	"wss://nostr.data.haus",
+	"wss://nostr.mom",
+	"wss://nostr.oxtr.dev",
+	"wss://nostr.sathoarder.com",
+	"wss://nostr.vulpem.com",
+	"wss://relay.binaryrobot.com",
+	"wss://relay.fountain.fm",
+	"wss://relay.mostro.network",
+	"wss://relay.nostrdice.com",
+	"wss://sendit.nosflare.com",
+	"wss://yabu.me/v2",
+	"wss://relay.damus.io",
+]
+
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
 const WOOD_PER_TREE := 2
@@ -33,8 +55,8 @@ func _ready() -> void:
 	Net.peer_leave.connect(_on_peer_leave)
 	Net.message.connect(_on_message)
 	Net.graph_changed.connect(_on_graph)
-	Net.join(ROOM_ID)
-	Net.map({})   # subscribe to the shared world graph (all nodes)
+	Net.join(ROOM_ID, RELAYS)   # passing our own relays = production-ready
+	Net.map({})                 # subscribe to the shared world graph (all nodes)
 
 func _process(delta: float) -> void:
 	_send_accum += delta
