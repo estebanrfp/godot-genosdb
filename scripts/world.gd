@@ -6,11 +6,13 @@ extends Node2D
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
 const ROOM_ID := "granja-genosdb-demo"
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
+const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
 
 @onready var player: CharacterBody2D = $Player
 
-var _remotes: Dictionary = {}   ## peerId -> remote farmer node
-var _trees: Dictionary = {}     ## tree_id -> tree node
+var _remotes: Dictionary = {}     ## peerId -> remote farmer node
+var _last_seen: Dictionary = {}   ## peerId -> last update time (ms)
+var _trees: Dictionary = {}       ## tree_id -> tree node
 var _send_accum := 0.0
 
 func _ready() -> void:
@@ -34,7 +36,9 @@ func _process(delta: float) -> void:
 			"y": player.global_position.y,
 			"a": player.anim.animation,
 			"f": player.anim.flip_h,
+			"c": player.color.to_html(false),
 		})
+	_cull_stale()
 
 # --- Players (ephemeral channel) ---
 
@@ -46,18 +50,31 @@ func _on_peer_join(id: String) -> void:
 	add_child(r)
 	r.set_label(id.substr(0, 4))
 	_remotes[id] = r
+	_last_seen[id] = Time.get_ticks_msec()
 
 func _on_peer_leave(id: String) -> void:
-	if _remotes.has(id):
-		_remotes[id].queue_free()
-		_remotes.erase(id)
+	_drop(id)
 
 func _on_message(id: String, data: Dictionary) -> void:
 	if not _remotes.has(id):
 		_on_peer_join(id)
+	_last_seen[id] = Time.get_ticks_msec()
 	var r: Node = _remotes.get(id)
 	if r:
 		r.receive_state(data)
+
+## Remove peers that left without a clean peer:leave (closed tab, lost connection).
+func _cull_stale() -> void:
+	var now := Time.get_ticks_msec()
+	for id in _remotes.keys():
+		if now - int(_last_seen.get(id, now)) > STALE_MS:
+			_drop(id)
+
+func _drop(id: String) -> void:
+	if _remotes.has(id):
+		_remotes[id].queue_free()
+		_remotes.erase(id)
+	_last_seen.erase(id)
 
 # --- Trees (persistent graph) ---
 

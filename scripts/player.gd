@@ -1,8 +1,8 @@
 extends CharacterBody2D
 
-## Top-down farmer with a full animation set: idle / walk / chop in 4 directions
-## (side mirrored for left). Press "chop" near a tree to hit it. Wood lives here for
-## now; the multiplayer layer will route it through GenosDB.
+## Top-down farmer (the local player). Picks a random tint at startup and
+## broadcasts it, so every peer sees this player in the same color (a simple,
+## consistent identity without needing a seed). Wood lives here.
 
 const SPEED := 82.0
 const CHOP_TIME := 0.32
@@ -13,12 +13,23 @@ var facing := Vector2.DOWN
 var dir_name := "down"
 var wood := 0
 var chop_timer := 0.0
+var color := Color.WHITE
+
+## Vivid tints that all contrast with the green farm (no greens that camouflage).
+const PALETTE := [
+	Color("ff5a5a"), Color("4aa3ff"), Color("ffb14a"), Color("c77dff"),
+	Color("ff7ad9"), Color("ffe14a"), Color("ff8c42"), Color("63e6ff"),
+	Color("ffffff"), Color("b0b0ff"),
+]
 
 @onready var anim: AnimatedSprite2D = $AnimatedSprite2D
 @onready var chop_area: Area2D = $ChopArea
 
 func _ready() -> void:
 	add_to_group("player")
+	randomize()
+	color = PALETTE[randi() % PALETTE.size()]   # distinct, readable tint per player
+	anim.modulate = color
 
 func _physics_process(delta: float) -> void:
 	var input := Input.get_vector("move_left", "move_right", "move_up", "move_down")
