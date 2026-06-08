@@ -4,7 +4,7 @@ extends Node2D
 ##   positions -> Net.send (ephemeral channel)   trees -> Net.put / Net.map (graph)
 
 const REMOTE_PLAYER := preload("res://scenes/remote_player.tscn")
-const ROOM_ID := "granja-genosdb-demo"
+const ROOM_ID := "genosdb-farm-demo"
 const SEND_INTERVAL := 0.06   ## ~16 Hz position broadcast
 const STALE_MS := 8000        ## drop a remote with no updates for this long (ghost cleanup)
 

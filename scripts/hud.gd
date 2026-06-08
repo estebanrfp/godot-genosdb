@@ -10,4 +10,4 @@ func _ready() -> void:
 		players[0].wood_changed.connect(_on_wood_changed)
 
 func _on_wood_changed(amount: int) -> void:
-	label.text = "Madera: %d" % amount
+	label.text = "Wood: %d" % amount
