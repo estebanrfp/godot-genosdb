@@ -6,7 +6,8 @@ extends CharacterBody2D
 ## animation so peers see the same pose.
 
 const SPEED := 82.0
-const CHOP_TIME := 0.42   ## ~ 6 chop frames at 14 fps
+const CHOP_TIME := 0.30
+const BASE_OFFSET := Vector2(0, -8)
 
 var dir_name := "down"
 var chop_timer := 0.0
@@ -40,6 +41,12 @@ func _physics_process(delta: float) -> void:
 		_chop()
 
 	_update_anim(input)
+	# Chop is a single attack pose, so add a quick lunge toward the tree for punch.
+	if chop_timer > 0.0:
+		var p := 1.0 - chop_timer / CHOP_TIME
+		anim.offset = BASE_OFFSET + _dir_vec() * sin(p * PI) * 3.0
+	else:
+		anim.offset = BASE_OFFSET
 
 func _dir_vec() -> Vector2:
 	match dir_name:

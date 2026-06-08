@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bb60o7wt2efou"
-path="res://.godot/imported/farmer_chop.png-e7638a839e1e57a75b4f14aad7c8d6ee.ctex"
+uid="uid://b5nthaw5pj8jl"
+path="res://.godot/imported/farmer.png-a862d9d5f592b11709d90ba07e83cc83.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/farm/farmer_chop.png"
-dest_files=["res://.godot/imported/farmer_chop.png-e7638a839e1e57a75b4f14aad7c8d6ee.ctex"]
+source_file="res://assets/farm/farmer.png"
+dest_files=["res://.godot/imported/farmer.png-a862d9d5f592b11709d90ba07e83cc83.ctex"]
 
 [params]
 

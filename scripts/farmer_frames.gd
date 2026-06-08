@@ -1,13 +1,13 @@
 class_name FarmerFrames
 extends RefCounted
 
-## Builds the LPC farmer SpriteFrames at runtime from two 64x64 sheets (walk:
-## 9 frames x 4 dirs, chop: 6 frames x 4 dirs; row order = up, left, down, right).
-## Cached and shared by the local and remote farmers. CC-BY-SA — see CREDITS.md.
+## Builds the farmer SpriteFrames at runtime from the Ninja Adventure character
+## sheet (CC0). Layout: 16x16 frames, COLUMN = direction (down/up/left/right),
+## ROW = animation frame (row 0 idle, rows 0-3 walk, row 4 attack). Cached and
+## shared by the local and remote farmers. See CREDITS.md.
 
-const WALK := "res://assets/farm/farmer_walk.png"
-const CHOP := "res://assets/farm/farmer_chop.png"
-const DIRS := ["up", "left", "down", "right"]
+const SHEET := "res://assets/farm/farmer.png"
+const DIR_COL := {"down": 0, "up": 1, "left": 2, "right": 3}
 
 static var _cache: SpriteFrames
 
@@ -16,22 +16,21 @@ static func get_frames() -> SpriteFrames:
 		return _cache
 	var sf := SpriteFrames.new()
 	sf.remove_animation("default")
-	var walk := load(WALK) as Texture2D
-	var chop := load(CHOP) as Texture2D
-	for r in DIRS.size():
-		var d: String = DIRS[r]
-		_add(sf, "walk_" + d, walk, r, 9, 10.0, true)
-		_add(sf, "chop_" + d, chop, r, 6, 14.0, false)
-		_add(sf, "idle_" + d, walk, r, 1, 6.0, true)   # standing pose = walk frame 0
+	var tex := load(SHEET) as Texture2D
+	for d in DIR_COL:
+		var col: int = DIR_COL[d]
+		_add(sf, "walk_" + d, tex, col, [0, 1, 2, 3], 8.0, true)
+		_add(sf, "idle_" + d, tex, col, [0], 4.0, true)
+		_add(sf, "chop_" + d, tex, col, [4], 8.0, false)   # attack pose
 	_cache = sf
 	return sf
 
-static func _add(sf: SpriteFrames, name: String, tex: Texture2D, row: int, count: int, fps: float, loop: bool) -> void:
+static func _add(sf: SpriteFrames, name: String, tex: Texture2D, col: int, rows: Array, fps: float, loop: bool) -> void:
 	sf.add_animation(name)
 	sf.set_animation_speed(name, fps)
 	sf.set_animation_loop(name, loop)
-	for c in count:
+	for r in rows:
 		var at := AtlasTexture.new()
 		at.atlas = tex
-		at.region = Rect2(c * 64, row * 64, 64, 64)
+		at.region = Rect2(col * 16, r * 16, 16, 16)
 		sf.add_frame(name, at)

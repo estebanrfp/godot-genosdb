@@ -1,27 +1,13 @@
 # Credits
 
-The code is MIT (see `LICENSE`). The art is a mix of **CC0** (no attribution
-required) and the **LPC character** (CC-BY-SA, attribution required — below).
-
-## Player character (LPC — CC-BY-SA 3.0)
-
-The animated farmer (4-directional walk + axe chop) was assembled from the
-**Universal LPC Spritesheet** layers (body, pants, longsleeve shirt, war axe) via
-the [LPC generator](https://github.com/LiberatedPixelCup/Universal-LPC-Spritesheet-Character-Generator).
-Licensed **CC-BY-SA 3.0 / GPL 3.0 / OGA-BY 3.0**; the composed spritesheets
-(`assets/farm/farmer_walk.png`, `farmer_chop.png`) are redistributed under
-**CC-BY-SA 3.0**. Authors:
-
-> bluecarrot16, JaidynReiman, Benjamin K. Smith (BenCreating), Evert,
-> Eliza Wyatt (ElizaWy), TheraHedwig, MuffinElZangano, Durrani,
-> Johannes Sjölund (wulax), Stephen Challener (Redshrike),
-> Sander Frenken (castelonia), Matthew Krohn (makrohn).
-
-Sources: https://opengameart.org/content/liberated-pixel-cup-lpc-base-assets-sprites-map-tiles ·
-https://opengameart.org/content/lpc-medieval-fantasy-character-sprites
+The code is MIT (see `LICENSE`). All demo art is **CC0 (public domain)** — free to
+use and redistribute, no attribution required. Credited here anyway, with thanks.
 
 ## Art assets (CC0)
 
+- **Player character** — *Ninja Adventure Asset Pack* by **Pixel-Boy & AAA**
+  (CC0, https://pixel-boy.itch.io/ninja-adventure-asset-pack). The animated farmer
+  (16x16, 4-directional walk + chop) is the straw-hat samurai sprite.
 - **Cozy farm tileset** — *Cozy Asset Pack 1.0* by **Ishtar Pixels**
   (CC0, https://opengameart.org/content/cozy-asset-pack-10). Ground, trees, house,
   fences, rocks, props. Bundled license: `assets/farm/LICENSE_cozy_ishtarpixels.txt`.
